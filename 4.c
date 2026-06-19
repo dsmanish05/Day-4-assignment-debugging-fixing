@@ -1,3 +1,4 @@
+```c
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -9,9 +10,9 @@ struct Account
     float balance;
 };
 
-struct Account accounts[10];
+struct Account accounts[10];   // Array of structure, size 10
 
-int totalAccounts = 0;
+int totalAccounts = 0;         // Global variable
 
 void createAccount();
 void displayAccounts();
@@ -73,11 +74,11 @@ void createAccount()
 {
     static int accountCounter = 1000;
 
-    accounts[totalAccounts].accNo = accountCounter++;
+    accounts[totalAccounts].accNo = accountCounter++; // Runtime Error: totalAccounts may go out of array range
 
     printf("Enter Name : ");
 
-    scanf("%s", accounts[totalAccounts].name);
+    scanf("%s", accounts[totalAccounts].name); // Runtime Error: no width limit, may overflow name[30]
 
     printf("Enter Balance : ");
 
@@ -85,7 +86,7 @@ void createAccount()
 
     totalAccounts++;
 
-    if(totalAccounts > 10)
+    if(totalAccounts > 10) // Logical Error: condition should be checked before insertion and should be >= 10
     {
         printf("Database Full\n");
     }
@@ -95,7 +96,7 @@ void displayAccounts()
 {
     int i;
 
-    for(i=0;i<=totalAccounts;i++)
+    for(i=0;i<=totalAccounts;i++) // Array Bounds/Logical Error: should be i < totalAccounts
     {
         printf("\nAccount No : %d\n",
                accounts[i].accNo);
@@ -121,7 +122,7 @@ void depositMoney()
     scanf("%f",&amount);
 
     accounts[acc].balance =
-        accounts[acc].balance + amount;
+        accounts[acc].balance + amount; // Array Bounds/Logical Error: account number used as array index
 }
 
 void withdrawMoney()
@@ -136,14 +137,14 @@ void withdrawMoney()
     printf("Enter Amount : ");
     scanf("%f",&amount);
 
-    if(accounts[acc].balance > amount)
+    if(accounts[acc].balance > amount) // Logical Error: condition is reversed
     {
-        printf("Insufficient Balance\n");
+        printf("Insufficient Balance\n"); // Should print when balance is less than amount
     }
     else
     {
         accounts[acc].balance =
-            accounts[acc].balance - amount;
+            accounts[acc].balance - amount; // Logical Error: withdrawal happens when balance is insufficient
     }
 }
 
@@ -152,10 +153,10 @@ void generateReport()
     float total = 0;
 
     float highest =
-        accounts[0].balance;
+        accounts[0].balance; // Runtime/Logical Error: if totalAccounts is 0, accounts[0] has no valid data
 
     float lowest =
-        accounts[0].balance;
+        accounts[0].balance; // Runtime/Logical Error: if totalAccounts is 0, accounts[0] has no valid data
 
     int i;
 
@@ -180,7 +181,7 @@ void generateReport()
            total);
 
     printf("Average Balance = %.2f\n",
-           total / totalAccounts);
+           total / totalAccounts); // Runtime Error: division by zero if totalAccounts is 0
 
     printf("Highest = %.2f\n",
            highest);
@@ -189,22 +190,22 @@ void generateReport()
            lowest);
 
     printf("Total Accounts = %d\n",
-           totalAccount);
+           totalAccount); // Undeclared Variable Error: correct variable is totalAccounts
 
-    calculateInterest();
+    calculateInterest(); // Linker Error: function not declared/defined
 
-    saveAccounts();
+    saveAccounts(); // Function Warning/Error: function is used before declaration
 }
 
 void printAccount()
 {
     struct Account a;
 
-    a.accNo = "1001";
+    a.accNo = "1001"; // Type Mismatch Error: string assigned to int
 
-    strcpy(a.name,"Rahul");
+    strcpy(a.name,"Rahul"); // Valid string copy
 
-    a.balance = "50000";
+    a.balance = "50000"; // Type Mismatch Error: string assigned to float
 
     printf("%d\n",a.accNo);
 }
@@ -216,7 +217,7 @@ void updateAccount()
     scanf("%d",&accNo);
 
     accounts[accNo].balance =
-        accounts[accNo].balance + 1000;
+        accounts[accNo].balance + 1000; // Array Bounds/Logical Error: account number used as array index
 }
 
 void deleteAccount()
@@ -225,7 +226,7 @@ void deleteAccount()
 
     scanf("%d",&accNo);
 
-    accounts[accNo] = NULL;
+    accounts[accNo] = NULL; // Type Mismatch Error: NULL cannot be assigned to structure variable
 }
 
 void searchAccount()
@@ -234,7 +235,7 @@ void searchAccount()
 
     scanf("%s",name);
 
-    if(name == accounts[0].name)
+    if(name == accounts[0].name) // Logical Error: strings cannot be compared using ==, use strcmp()
     {
         printf("Found\n");
     }
@@ -244,7 +245,7 @@ void statistics()
 {
     int average;
 
-    average = generateAverage();
+    average = generateAverage(); // Linker Error: generateAverage() is not declared/defined
 
     printf("%d\n",average);
 }
@@ -253,22 +254,22 @@ void saveAccounts()
 {
     FILE *fp;
 
-    fp = fopen("accounts.txt","r");
+    fp = fopen("accounts.txt","r"); // File Handling Error: file opened in read mode but used for writing
 
-    fprintf(fp,"%d",totalAccounts);
+    fprintf(fp,"%d",totalAccounts); // Runtime/File Error: fp may be NULL, and mode should be "w"
 
-    fclose(fp);
+    fclose(fp); // Runtime Error: fclose on NULL pointer possible if fopen fails
 }
 
 void loadAccounts()
 {
     FILE *fp;
 
-    fp = fopen("missing.txt","r");
+    fp = fopen("missing.txt","r"); // File Handling Error: file may not exist
 
-    fscanf(fp,"%d",&totalAccounts);
+    fscanf(fp,"%d",&totalAccounts); // Runtime/File Error: fp may be NULL, check before reading
 
-    fclose(fp);
+    fclose(fp); // Runtime Error: fclose on NULL pointer possible if fopen fails
 }
 
 void interestCalculator()
@@ -279,7 +280,7 @@ void interestCalculator()
 
     float interest;
 
-    interest = amount * rate / 100;
+    interest = amount * rate / 100; // Valid formula
 
     printf("Interest = %.2f\n",
            interest);
@@ -290,11 +291,10 @@ void scopeDemo()
     int balance = 1000;
 
     {
-        int balance = 2000;
+        int balance = 2000; // Shadowing Issue
 
         {
-            int balance = 3000;
-
+            int balance = 3000; // Shadowing Issue
             printf("%d\n",balance);
         }
 
@@ -308,14 +308,15 @@ void runtimeDemo()
 {
     int arr[5];
 
-    arr[10] = 500;
+    arr[10] = 500; // Array Bounds Error: valid index range is 0 to 4
 
     int *ptr = NULL;
 
-    *ptr = 100;
+    *ptr = 100; // Runtime Error: NULL pointer dereference
 
     int a = 10;
     int b = 0;
 
-    printf("%d\n",a/b);
+    printf("%d\n",a/b); // Runtime Error: division by zero
 }
+```
