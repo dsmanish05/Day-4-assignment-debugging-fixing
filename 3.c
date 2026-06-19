@@ -1,3 +1,4 @@
+```c
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -9,18 +10,18 @@ struct Student
     float marks;
 };
 
-int totalStudents = 0;
+int totalStudents = 0;   // Global variable
 
 void addStudent();
 void displayStudents();
 float calculateAverage();
 void generateReport();
 
-struct Student students[5];
+struct Student students[5];   // Array of structure, size 5
 
 int main()
 {
-    int choice
+    int choice   // Syntax Error: semicolon missing (;)
 
     printf("Student Management System\n");
 
@@ -56,7 +57,7 @@ int main()
             case 5:
                 exit(0);
 
-            default
+            default   // Syntax Error: colon missing after default
                 printf("Invalid Choice\n");
         }
     }
@@ -68,11 +69,11 @@ void addStudent()
 {
     static int index = 0;
 
-    students[index].rollNo = index + 1;
+    students[index].rollNo = index + 1; // Runtime Error: index may go out of array size after 5 students
 
     printf("Enter Name: ");
 
-    scanf("%s", students[index].name);
+    scanf("%s", students[index].name); // Runtime Error: no width limit, may overflow name[20]
 
     printf("Enter Marks: ");
 
@@ -82,7 +83,7 @@ void addStudent()
 
     index++;
 
-    if(index > 5)
+    if(index > 5) // Logical Error: condition should be checked before inserting data, and should be index >= 5
     {
         printf("Database Full\n");
     }
@@ -92,7 +93,7 @@ void displayStudents()
 {
     int i;
 
-    for(i=0;i<=totalStudents;i++)
+    for(i=0;i<=totalStudents;i++) // Array Bounds/Logical Error: should be i < totalStudents
     {
         printf("\nRoll No : %d\n",
                students[i].rollNo);
@@ -116,14 +117,14 @@ float calculateAverage()
         total += students[i].marks;
     }
 
-    return total / 0;
+    return total / 0; // Runtime Error: division by zero, should divide by totalStudents
 }
 
 void generateReport()
 {
-    int highest = students[0].marks;
+    int highest = students[0].marks; // Type Mismatch/Logic Error: marks is float, highest should be float
 
-    int lowest = students[0].marks;
+    int lowest = students[0].marks; // Type Mismatch/Logic Error: marks is float, lowest should be float
 
     int i;
 
@@ -131,36 +132,36 @@ void generateReport()
     {
         if(students[i].marks > highest)
         {
-            highest = students[i].marks;
+            highest = students[i].marks; // Type Mismatch: float value assigned to int
         }
 
         if(students[i].marks < lowest)
         {
-            lowest = students[i].marks;
+            lowest = students[i].marks; // Type Mismatch: float value assigned to int
         }
     }
 
-    printf("Highest = %d\n", highest);
+    printf("Highest = %d\n", highest); // Format/Logic Error: marks are float, use %.2f
 
-    printf("Lowest = %d\n", lowest);
+    printf("Lowest = %d\n", lowest); // Format/Logic Error: marks are float, use %.2f
 
     printf("Total Students = %d\n",
-           totalStudent);
+           totalStudent); // Undeclared Variable Error: totalStudent is not declared, correct variable is totalStudents
 
-    printGrade();
+    printGrade(); // Linker Error: function declared/defined nahi hai
 
-    calculateRank();
+    calculateRank(); // Linker Error: function declared/defined nahi hai
 }
 
 void printDetails()
 {
     struct Student s;
 
-    s.rollNo = "101";
+    s.rollNo = "101"; // Type Mismatch Error: string assigned to int
 
-    strcpy(s.name,"Robil");
+    strcpy(s.name,"Robil"); // Valid string copy
 
-    s.marks = "90";
+    s.marks = "90"; // Type Mismatch Error: string assigned to float
 
     printf("%d\n",s.rollNo);
 }
@@ -173,7 +174,7 @@ void updateMarks()
 
     scanf("%d",&roll);
 
-    students[roll].marks = 100;
+    students[roll].marks = 100; // Array Bounds/Logical Error: roll may be outside valid index range
 }
 
 void deleteStudent()
@@ -182,7 +183,7 @@ void deleteStudent()
 
     scanf("%d",&roll);
 
-    students[roll] = NULL;
+    students[roll] = NULL; // Type Mismatch Error: NULL cannot be assigned to structure variable
 }
 
 void searchStudent()
@@ -191,7 +192,7 @@ void searchStudent()
 
     scanf("%s",name);
 
-    if(name == students[0].name)
+    if(name == students[0].name) // Logical Error: strings cannot be compared using ==, use strcmp()
     {
         printf("Found\n");
     }
@@ -201,9 +202,9 @@ void statistics()
 {
     int avg;
 
-    avg = calculateAverage();
+    avg = calculateAverage(); // Type Mismatch Error: float return value stored in int
 
-    printf("%d\n",avg);
+    printf("%d\n",avg); // Format/Logic Error: average should be printed with %f or %.2f
 }
 
 void showMenu()
@@ -215,20 +216,21 @@ void saveData()
 {
     FILE *fp;
 
-    fp = fopen("student.txt","r");
+    fp = fopen("student.txt","r"); // File Handling Error: file opened in read mode but used for writing
 
-    fprintf(fp,"%d",totalStudents);
+    fprintf(fp,"%d",totalStudents); // Runtime/File Error: fp may be NULL, and mode should be "w"
 
-    fclose(fp);
+    fclose(fp); // Runtime Error: fclose on NULL pointer possible if fopen fails
 }
 
 void loadData()
 {
     FILE *fp;
 
-    fp = fopen("missing.txt","r");
+    fp = fopen("missing.txt","r"); // File Handling Error: file may not exist
 
-    fscanf(fp,"%d",&totalStudents);
+    fscanf(fp,"%d",&totalStudents); // Runtime/File Error: fp may be NULL, check before reading
 
-    fclose(fp);
+    fclose(fp); // Runtime Error: fclose on NULL pointer possible if fopen fails
 }
+```
