@@ -1,3 +1,4 @@
+```c
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -22,7 +23,7 @@ void generateReport();
 
 int main()
 {
-    int choice
+    int choice   // Syntax Error: missing semicolon (;)
 
     printf("Library Management System\n");
 
@@ -62,7 +63,7 @@ int main()
             case 6:
                 exit(0);
 
-            default
+            default   // Syntax Error: colon (:) missing
                 printf("Invalid Choice\n");
         }
     }
@@ -77,17 +78,17 @@ void addBook()
     books[totalBooks].bookId = bookCounter++;
 
     printf("Enter Title : ");
-    scanf("%s", books[totalBooks].title);
+    scanf("%s", books[totalBooks].title); // Runtime Error: may overflow title array
 
     printf("Enter Author : ");
-    scanf("%s", books[totalBooks].author);
+    scanf("%s", books[totalBooks].author); // Runtime Error: may overflow author array
 
     printf("Enter Price : ");
     scanf("%f",&books[totalBooks].price);
 
     totalBooks++;
 
-    if(totalBooks > 20)
+    if(totalBooks > 20) // Logical Error: should be checked before insertion and use >= 20
     {
         printf("Library Full\n");
     }
@@ -97,7 +98,7 @@ void displayBooks()
 {
     int i;
 
-    for(i=0;i<=totalBooks;i++)
+    for(i=0;i<=totalBooks;i++) // Array Bounds Error: should be i < totalBooks
     {
         printf("\nBook ID : %d",
                books[i].bookId);
@@ -120,7 +121,7 @@ void issueBook()
     printf("Enter Book ID : ");
     scanf("%d",&id);
 
-    books[id].price = books[id].price - 10;
+    books[id].price = books[id].price - 10; // Logical Error: Book ID used as array index
 }
 
 void returnBook()
@@ -130,16 +131,14 @@ void returnBook()
     scanf("%d",&id);
 
     books[id].price =
-        books[id].price + 10;
+        books[id].price + 10; // Logical Error: Book ID used as array index
 }
 
 void generateReport()
 {
-    float highest =
-        books[0].price;
+    float highest = books[0].price; // Runtime Error: no books added yet
 
-    float lowest =
-        books[0].price;
+    float lowest = books[0].price; // Runtime Error: no books added yet
 
     float totalPrice = 0;
 
@@ -167,27 +166,27 @@ void generateReport()
            lowest);
 
     printf("Average Price = %.2f\n",
-           totalPrice/totalBooks);
+           totalPrice/totalBooks); // Runtime Error: division by zero if totalBooks = 0
 
     printf("Total Books = %d\n",
-           totalBook);
+           totalBook); // Undeclared Variable Error: should be totalBooks
 
-    saveLibrary();
+    saveLibrary(); // Function used before declaration
 
-    calculateFine();
+    calculateFine(); // Linker Error: function not defined
 }
 
 void printBook()
 {
     struct Book b;
 
-    b.bookId = "101";
+    b.bookId = "101"; // Type Mismatch Error: string assigned to int
 
     strcpy(b.title,"C Programming");
 
     strcpy(b.author,"Dennis");
 
-    b.price = "500";
+    b.price = "500"; // Type Mismatch Error: string assigned to float
 
     printf("%d\n",b.bookId);
 }
@@ -198,7 +197,7 @@ void searchBook()
 
     scanf("%s",title);
 
-    if(title == books[0].title)
+    if(title == books[0].title) // Logical Error: strings cannot be compared using ==
     {
         printf("Book Found\n");
     }
@@ -210,7 +209,7 @@ void deleteBook()
 
     scanf("%d",&id);
 
-    books[id] = NULL;
+    books[id] = NULL; // Type Mismatch Error: structure cannot be assigned NULL
 }
 
 void updateBook()
@@ -220,14 +219,14 @@ void updateBook()
     scanf("%d",&id);
 
     books[id].price =
-        books[id].price + 100;
+        books[id].price + 100; // Logical Error: Book ID used as array index
 }
 
 void statistics()
 {
     int avg;
 
-    avg = calculateAveragePrice();
+    avg = calculateAveragePrice(); // Linker Error: function not defined
 
     printf("%d\n",avg);
 }
@@ -236,9 +235,9 @@ void saveLibrary()
 {
     FILE *fp;
 
-    fp = fopen("library.txt","r");
+    fp = fopen("library.txt","r"); // File Handling Error: opened in read mode
 
-    fprintf(fp,"%d",totalBooks);
+    fprintf(fp,"%d",totalBooks); // Runtime/File Error: writing in read mode
 
     fclose(fp);
 }
@@ -247,9 +246,9 @@ void loadLibrary()
 {
     FILE *fp;
 
-    fp = fopen("missing.txt","r");
+    fp = fopen("missing.txt","r"); // File Handling Error: file may not exist
 
-    fscanf(fp,"%d",&totalBooks);
+    fscanf(fp,"%d",&totalBooks); // Runtime Error: fp may be NULL
 
     fclose(fp);
 }
@@ -259,10 +258,10 @@ void scopeDemo()
     int count = 10;
 
     {
-        int count = 20;
+        int count = 20; // Shadowing Issue
 
         {
-            int count = 30;
+            int count = 30; // Shadowing Issue
 
             printf("%d\n",count);
         }
@@ -277,16 +276,16 @@ void pointerDemo()
 {
     int *ptr = NULL;
 
-    *ptr = 100;
+    *ptr = 100; // Runtime Error: NULL pointer dereference
 
     int arr[5];
 
-    arr[10] = 200;
+    arr[10] = 200; // Array Bounds Error: valid index is 0-4
 
     int a = 10;
     int b = 0;
 
-    printf("%d\n",a/b);
+    printf("%d\n",a/b); // Runtime Error: division by zero
 }
 
 void stringDemo()
@@ -294,7 +293,7 @@ void stringDemo()
     char name[5];
 
     strcpy(name,
-           "Programming");
+           "Programming"); // Buffer Overflow Error: string larger than array
 
     printf("%s\n",name);
 }
@@ -303,16 +302,16 @@ void memoryDemo()
 {
     int *ptr;
 
-    ptr = malloc(5);
+    ptr = malloc(5); // Memory Error: only 5 bytes allocated
 
     for(int i=0;i<20;i++)
     {
-        ptr[i] = i;
+        ptr[i] = i; // Runtime Error: writing beyond allocated memory
     }
 
     free(ptr);
 
-    printf("%d\n",ptr[0]);
+    printf("%d\n",ptr[0]); // Runtime Error: use after free
 
-    free(ptr);
+    free(ptr); // Runtime Error: double free
 }
